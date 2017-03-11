@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for "bookstore" DispatcherServlet.
+  -->
+
+<beans>
+
+    <!-- Local DataSource that works in any environment -->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName"><value>org.hsqldb.jdbcDriver</value></property>
+<!--         <property name="url"><value>jdbc:hsqldb:file:C:\Books\_TheoryAndPractice\chapters\ExtraFiles\InternetBookstore\InternetBookstore\db</value></property> -->
+        <property name="url"><value>jdbc:hsqldb:file:C:\Dev\InternetBookstore\db\test</value></property>
+        <property name="username"><value>sa</value></property>
+        <property name="password"><value></value></property>
+    </bean>
+
+    <!-- Makes all beans use JstlView instead of the default InternalResourceView: -->
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass">
+            <value>org.springframework.web.servlet.view.JstlView</value>
+        </property>
+        <property name="prefix"><value>/WEB-INF/jsp/</value></property>
+        <property name="suffix"><value>.jsp</value></property>
+    </bean>
+
+    <!--
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Controllers:
+    -->
+    <bean id="homeController" class="com.iconixsw.bookstore.web.HomeController"/>
+    <bean id="searchController" class="com.iconixsw.bookstore.web.SearchController"/>
+    <bean id="bookDetailsController" class="com.iconixsw.bookstore.web.BookDetailsController">
+        <property name="bookDao">
+            <ref bean="bookDao" />
+        </property>
+    </bean>
+
+	<bean id="writeCustomerReviewController" class="com.iconixsw.bookstore.web.WriteCustomerReviewController">
+		<property name="formView">
+			<value>writecustomerreview</value>
+		</property>
+		<property name="successView">
+			<value>customerreviewaccepted</value>
+		</property>
+
+		<!--
+        <property name="validator">
+            <bean class="com.iconixsw.bookstore.domain.BookstoreValidator" />
+        </property>
+        -->
+        <property name="validator">
+            <bean class="com.iconixsw.bookstore.domain.logic.CustomerReviewValidator" />
+        </property>
+
+        <property name="bookDao">
+            <ref bean="bookDao" />
+        </property>
+        <property name="customerDao">
+            <ref bean="customerDao" />
+        </property>
+        <property name="customerReviewDao">
+            <ref bean="customerReviewDao" />
+        </property>
+    </bean>
+    <bean id="customerReviewAcceptedController" class="com.iconixsw.bookstore.web.CustomerReviewAcceptedController"/>
+
+    <!--
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Data Access Objects:
+    -->
+
+    <bean id="bookDao" class="com.iconixsw.bookstore.dao.jdbc.JdbcBookDao" lazy-init="true">
+        <property name="dataSource">
+            <ref local="dataSource"/>
+        </property>
+    </bean>
+
+    <bean id="customerDao" class="com.iconixsw.bookstore.dao.jdbc.JdbcCustomerDao" lazy-init="true">
+        <property name="dataSource">
+            <ref local="dataSource"/>
+        </property>
+    </bean>
+
+    <bean id="customerReviewDao" class="com.iconixsw.bookstore.dao.jdbc.JdbcCustomerReviewDao" lazy-init="true">
+        <property name="dataSource">
+            <ref local="dataSource"/>
+        </property>
+    </bean>
+
+
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/home.htm">homeController</prop>
+                <prop key="/search.htm">searchController</prop>
+                <prop key="/bookdetails.htm">bookDetailsController</prop>
+                <prop key="/writecustomerreview.htm">writeCustomerReviewController</prop>
+                <prop key="/customerreviewaccepted.htm">customerReviewAcceptedController</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+
+<!--
+    This is a sample file from the Internet Bookstore example project,
+    for the book "Use Case Driven Object Modeling with UML - Theory and Practice".
+    Copyright (c) Doug Rosenberg and Matt Stephens, 2007.
+
+    For more info, see: http://www.iconixprocess.com/books/use-case-driven/
+
+    This build file was adapted from the basic build file supplied with the Spring Framework
+    distribution, by Rod Johnson. For more info on Spring Framework, please see:
+    http://www.springframework.org/
+
+    Please note: This code is for learning purposes only, and comes with no warranty of any kind.
+
+    This code represents the Bookstore at various stages of development and review,
+    as described in the "Use Case Driven" book. We encourage you to compare this code with
+    the models illustrated in the book, and especially with the "review" chapters. Have fun!
+-->
+
+
+
+<!--
+  A basic build file you can use as the basis for your own projects.
+	@author Rod Johnson
+-->
+
+<project name="bookstore" basedir="." default="usage">
+
+	<property file="build.properties"/>
+
+
+	<path id="master-classpath">
+
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+		</fileset>
+
+	</path>
+
+
+	<target name="usage">
+
+		<echo message=""/>
+		<echo message="Web application skeleton build file"/>
+		<echo message="*** Make sure you've copied the required JAR files to the lib directory."/>
+		<echo message="*** See lib/readme.txt for more information."/>
+		<echo message="------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message="Available targets are:"/>
+		<echo message=""/>
+		<echo message="clean    --> Clean output dirs"/>
+		<echo message="build    --> Compile main Java sources and copy libraries"/>
+		<echo message="warfile  --> Create WAR deployment unit"/>
+
+		<echo message=""/>
+
+	</target>
+
+
+	<target name="clean" description="Clean output dirs (build, dist)">
+
+		<delete dir="${build.dir}"/>
+
+		<delete dir="${dist.dir}"/>
+
+	</target>
+
+
+	<target name="build" description="Compile main source tree java files into class files, generate jar files">
+
+		<mkdir dir="${build.dir}"/>
+
+		<javac destdir="${build.dir}" source="1.5" target="1.5" debug="true"
+				deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath"/>
+		</javac>
+
+	</target>
+
+
+	<target name="warfile" depends="build" description="Build the web application archive">
+
+		<mkdir dir="${dist.dir}"/>
+
+		<war warfile="${dist.dir}/${name}.war" webxml="${war.dir}/WEB-INF/web.xml">
+
+			<!-- Include the JSPs and other documents -->
+			<fileset dir="war" excludes="WEB-INF/**"/>
+
+			<!-- Bring in Spring-specific XML configuration files -->
+			<webinf dir="${war.dir}/WEB-INF">
+				<!-- We've already included this -->
+				<exclude name="web.xml"/>
+			</webinf>
+
+			<!-- Include the compiled classes -->
+			<classes dir="${build.dir}"/>
+
+			<lib dir="${lib.dir}">
+				<!-- The servlet container provides the Servlet API -->
+				<exclude name="servlet-api.jar"/>
+			</lib>
+
+		</war>
+
+	</target>
+
+</project>

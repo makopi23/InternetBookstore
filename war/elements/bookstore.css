@@ -1,0 +1,17 @@
+body {
+  font-family : Verdana, Arial, Geneva, Helvetica, sans-serif;
+  background-color : white;
+  font-size : 10pt;
+}
+
+.navbar {
+  background-color : #CCCCFF;
+  border : 1px solid;
+  padding : 5px;
+}
+
+.error {
+  color: #FF0000;
+  font-size: 12pt;
+}
+
